@@ -188,7 +188,130 @@ elif st.session_state.current_tab == "Insurance Coverage":
 elif st.session_state.current_tab == "Mental Health Metrics":
     st.header("Mental Health Metrics")
     st.write("This section will visualize metrics such as provider ratios, distress levels, and suicide rates.")
-    
+    left = pd.read_excel('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/MentalHealthCoverage/2025_county_health_rankings_texas_data_-_v1.xlsx', sheet_name="Select Measure Data")
+
+    ## Plot 1 
+
+    st.divider()
+    left = left[['State', 'County','Average Number of Mentally Unhealthy Days','# Mental Health Providers', 'Mental Health Provider Rate', 
+        'Mental Health Provider Ratio', '# Primary Care Physicians', 'Primary Care Physicians Rate', 
+        'Primary Care Physicians Ratio', '# Uninsured', '% Uninsured' ]]
+    right = pd.read_excel('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/MentalHealthCoverage/2025_county_health_rankings_texas_data_-_v1.xlsx', sheet_name='Additional Measure Data')
+    right = right[['State', 'County','% Frequent Mental Distress', 'Suicide Rate (Age-Adjusted)', 'Other Primary Care Provider Ratio',
+            'Population']]
+    finaldata = pd.merge(left=left, right=right, how='inner', on=['State', 'County'])
+    # read in demographics dataset
+    demographics = pd.read_csv('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/demographics.csv')
+    dem_final = demographics.copy()
+    # remove the 'county' in each county name 
+    dem_final['COUNTYNAME'] = dem_final['COUNTYNAME'].str.replace('County', '', case=False).str.strip()
+    #merge mentalhealth data with demographics 
+    merged_dem_data = pd.merge(left=finaldata, right=dem_final, left_on='County', right_on='COUNTYNAME', how='left')
+    merged_dem_data.drop(columns='Unnamed: 0', inplace=True)
+    # replace with a binary categorical value for later graphing
+    def create(input):
+        if pd.isna(input):
+            return 'Low % Minority'
+        else:
+            return 'High % Minority'
+    merged_dem_data['High or Low % Minority'] = merged_dem_data['COUNTYNAME'].apply(create)
+    mh_and_demographic = merged_dem_data.copy()
+    #function to turn ratios into decimals 
+    def ratio(input):
+        left, right = input.split(':')
+        left = left.replace(',','')
+        right = right.replace(',','')
+        return round((float(right)/float(left) * 100),7)
+    #take a copy 
+    mh_ratio_cleaned = mh_and_demographic.copy()
+    #clean up the Ratio column and remove any rows that contain NaN's in that column 
+    mh_ratio_cleaned = mh_ratio_cleaned.dropna(subset=['Mental Health Provider Ratio']).copy()
+    mh_ratio_cleaned['Mental Health Provider Ratio'] = mh_ratio_cleaned['Mental Health Provider Ratio'].astype(dtype=str)
+    mh_ratio_cleaned['Mental Health Provider Ratio'] = mh_ratio_cleaned['Mental Health Provider Ratio'].apply(ratio)
+    mh_ratio_cleaned = mh_ratio_cleaned[['County', 'Mental Health Provider Ratio', 'High or Low % Minority']] #Select relevant columns 
+    mh_ratio_cleaned.dropna(inplace=True) #remove rows with NaN's 
+    mh_ratio_cleaned.reset_index(drop=True, inplace=True) #reset the index 
+    mh_ratio_cleaned.set_index('County', inplace=True)
+    mh_ratio_cleaned.sort_values(by='Mental Health Provider Ratio', inplace=True)
+    fig, ax = plt.subplots(figsize=(10,8))
+    mh_ratio_cleaned.plot(y='Mental Health Provider Ratio', figsize=(20,6), ax=ax)
+    ax.set_xticks(range(len(mh_ratio_cleaned.index)))
+    ax.set_xticklabels(mh_ratio_cleaned.index, rotation=45, fontsize=5)
+    st.pyplot(fig)
+
+    ## Plot 2 
+
+    st.divider()
+    import plotly.express as px
+    fig = px.bar(
+        mh_ratio_cleaned.reset_index(),
+        x='County',
+        y='Mental Health Provider Ratio',
+        color='High or Low % Minority',
+        title='Mental Health Provider Ratio by County',
+        height=600
+    )
+    fig.update_layout(xaxis_tickangle=90)
+    st.plotly_chart(fig, use_container_width=True)
+
+    ## Plot 3 
+
+    st.divider()
+    mh_suicide_rate = mh_and_demographic[['County', 'Suicide Rate (Age-Adjusted)', 'High or Low % Minority']]
+    mh_suicide_rate = mh_suicide_rate.dropna().copy()
+    mh_suicide_rate.sort_values(by='Suicide Rate (Age-Adjusted)', inplace=True)
+    mh_suicide_rate = mh_suicide_rate[mh_suicide_rate['Suicide Rate (Age-Adjusted)'] != 0]
+    mh_suicide_rate.set_index('County', inplace=True)
+    import plotly.express as px
+    fig = px.bar(
+    mh_suicide_rate.reset_index(),
+    x='County',
+    y='Suicide Rate (Age-Adjusted)',
+    color='High or Low % Minority',
+    title='Suicide Rate by County',
+    height=600,
+    color_discrete_map={
+        'High % Minority': '#EF553B',  # red-orange
+        'Low % Minority': '#636EFA'   # blue
+    }
+    )
+    fig.update_layout(xaxis_tickangle=90)
+    st.plotly_chart(fig, use_container_width=True)
+
+    ### Plot 4 
+
+    st.divider()
+    therapists_data = pd.read_csv('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/MentalHealthCoverage/Clinician_Region.csv')
+    #clean and merge the two datasets
+    therapists_data['County'] = therapists_data['County'].str.replace('County', '', case=False).str.strip()
+    therapist_merged = pd.merge(left=therapists_data, right=dem_final, left_on='County', right_on='COUNTYNAME',
+            how='left')
+    therapist_merged.drop(columns='Unnamed: 0', inplace=True)
+    #Create new column that makes a binary categorical variable
+    therapist_merged['High or Low % Minority'] = therapist_merged['COUNTYNAME'].apply(create)
+    import geopandas as gpd
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    # Load shapefile and filter for Texas
+    tx_counties = gpd.read_file('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/texas_shapefile')
+    tx_counties = tx_counties[tx_counties['STATEFP'] == '48']
+    # Prepare your dataset
+    therapist_merged['County'] = therapist_merged['County'].str.strip()
+    # Merge shapefile and your data
+    tx_map = tx_counties.merge(therapist_merged, left_on='NAME', right_on='County')
+    # Calculate psychiatrists per 100k population
+    tx_map['Psychiatrists per 100k (2023)'] = tx_map['Psychiatrist 2023'] / tx_map['2023 Population'] * 100000
+    # Plot side-by-side maps
+    fig, axs = plt.subplots(1, 2, figsize=(20, 10))
+    tx_map.plot(column='High or Low % Minority', ax=axs[0], legend=True, cmap='coolwarm', edgecolor='black')
+    axs[0].set_title('High vs Low % Minority', fontsize=14)
+    axs[0].axis('off')
+    tx_map.plot(column='Psychiatrists per 100k (2023)', ax=axs[1], legend=True, cmap='viridis', edgecolor='black')
+    axs[1].set_title('Psychiatrists per 100k (2023)', fontsize=14)
+    axs[1].axis('off')
+    plt.tight_layout()
+    st.pyplot(fig)
+
 
 elif st.session_state.current_tab == "Physician Access":
     st.header("Physician Access")
