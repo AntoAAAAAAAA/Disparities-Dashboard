@@ -144,7 +144,7 @@ elif st.session_state.current_tab == "Insurance Coverage":
 
     st.divider()
     texas_data = texas_data[texas_data['county_name'] != '']
-    unins_by_county_data = texas_data.groupby('county_name').mean('Percent Uninsured for all income levels')
+    unins_by_county_data = texas_data.groupby('county_name')['Percent Uninsured for all income levels'].mean()
     unins_by_county_data= unins_by_county_data[['Percent Uninsured for all income levels']]
     unins_by_county_data.reset_index(inplace=True)
     demographics = pd.read_csv('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/demographics.csv')
@@ -182,8 +182,7 @@ elif st.session_state.current_tab == "Insurance Coverage":
     ###Last Section: Dataframe 
     st.divider()
     # Group and calculate mean
-    st.dataframe(final.groupby('% Minority').mean('Percent Uninsured for all income levels'))
-
+    st.dataframe(final.groupby('% Minority')['Percent Uninsured for all income levels'].mean())
 
 elif st.session_state.current_tab == "Mental Health Metrics":
     st.header("Mental Health Metrics")
@@ -312,10 +311,10 @@ elif st.session_state.current_tab == "Mental Health Metrics":
     plt.tight_layout()
     st.pyplot(fig)
 
-
 elif st.session_state.current_tab == "Physician Access":
     st.header("Physician Access")
-    st.write("This could be anything: data upload, model output, etc.")
+    st.write("This section will visualize the amount of access different populations in Texas have to physicians.")
+
 
 else:
     st.error("Unknown tab. Please select a valid one.")
