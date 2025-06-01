@@ -74,6 +74,7 @@ elif st.session_state.current_tab == "Insurance Coverage":
         #create bar graph
         fig, ax = plt.subplots(figsize=(10,4))
         newdata.plot(kind='bar', y='Percent Uninsured for all income levels', ax=ax)
+        ax.set_title("Percentage of Uninsured Individuals per County")
         ax.set_xticklabels(ax.get_xticklabels(), fontsize=1, rotation = 90)
         ax.legend().set_visible(False)
         ax.set_ylabel('Percent Uninsured for all income levels')
@@ -110,6 +111,10 @@ elif st.session_state.current_tab == "Insurance Coverage":
         ax.set_ylabel('Percent of Uninsured Individuals for all Income Levels')
         ax.set_title('Percent of Uninsured Texans by Race/Ethnicity')
         st.pyplot(fig)
+        st.markdown('In this figure, we see that African Americans alone, American Indian/Alaska Natives alone,' \
+        ' and Pacific Islanders all make up a higher percentage of the uninsured population in Texas. ' \
+        'When looking at ethnicity, those with Hispanic heritage showed the highest proportion of the uninsured population. ' \
+        '')
 
         ### Plot 3 
 
@@ -141,8 +146,14 @@ elif st.session_state.current_tab == "Insurance Coverage":
         ax.set_title('Percent Uninsured by Race and Sex (All Income Levels)')
         ax.set_ylabel('Percent Uninsured')
         ax.set_xlabel('Race Category')
-        ax.legend(labels='Sex')
+        ax.legend(title='Sex')
         st.pyplot(fig)
+        st.markdown('We see a similar breakdown of percentages of uninsured individuals based on race, except' \
+        'this time it is split between gender. Looking at the figure, we see that there are no significant differences between' \
+        'male and female individuals. However, similar to previous graph on this page, we see that those of Hispanic ethnicity ' \
+        'make up a larger proportion of the uninsured population. We also see that "White" and "Asian Only" are the two racial groups that ' \
+        'make up the smallest proportino of the uninsured population. This data suggests, along with the graph above, suggests a very surface-level correlation' \
+        'between being an ethnic or racial minority and being more likely to not have health insurance coverage.')
 
     ### Plot 4
 
@@ -183,6 +194,17 @@ elif st.session_state.current_tab == "Insurance Coverage":
         st.pyplot(fig)
         # Group and calculate mean
         st.dataframe(final.groupby('% Minority')['Percent Uninsured for all income levels'].mean())
+        
+        st.markdown('The graph on the left graphs counties that are considered to have high or low percentages of minority populations ' \
+        'as part of their populations. The decision to consider a county to have a high percentage of minorities was made using a separate dataset. ' \
+        'This separate dataset contained percentages of racial gropus within each county. Each percentage was given a Z-score. Counties that had at least' \
+        'one racial group that had higher than 1 Z-score were considered to be counties that contained a high percentage of minorities. All other counties' \
+        'were considered to have a low percentage of minorities.')
+        st.markdown('The graph on the right maps the percentage of uninsured individuals across different Texas counties.')
+        st.write('Looking at these two graphs, we can see somewhat of a common distribution between counties that contain higher percentages of uninsured individuals and counties' \
+        'that contain higher percentages of minorities. No conclusive trends or conclusions can be ascertained, but there is some small evidence that ' \
+        'counties with a higher percentage of minorities also haveing a higher percentage of uninsured individuals. This conclusion would cosine the conclusions' \
+        'derived from the bar graphs in this section.')
     ###Last Section: Dataframe 
     st.divider()
 
@@ -396,5 +418,7 @@ elif st.session_state.current_tab == "Physician Access":
 
 elif st.session_state.current_tab == 'My Journey/Reflections':
     st.markdown('This section will be worked on later.')
+
+
 else:
     st.error("Unknown tab. Please select a valid one.")
