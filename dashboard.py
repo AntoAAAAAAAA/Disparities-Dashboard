@@ -312,9 +312,82 @@ elif st.session_state.current_tab == "Mental Health Metrics":
     st.pyplot(fig)
 
 elif st.session_state.current_tab == "Physician Access":
+    import geopandas as gpd
     st.header("Physician Access")
     st.write("This section will visualize the amount of access different populations in Texas have to physicians.")
+    
+    st.divider()
+    data = pd.read_csv('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/PhysicianAccess/texas-2025-primary-care-physicians-place-sort.csv')
+    # data[data.isnull().any(axis=1)]
+    keep_row = data.iloc[0]
+    data = data.dropna().copy()
+    data.iloc[0] = keep_row
+    # or 
+    # filtered_data = pd.concat([keep_row, data.iloc[1:].dropna()])
+    def ratio(input):
+        left, right = input.split(':')
+        left = left.replace(',','')
+        right = right.replace(',','')
+        return round((float(right)/float(left) * 100),4)
+    data.rename(columns={'County Value**': 'Physician:Population'}, inplace=True)
+    data['Physician:Population'] = data['Physician:Population'].apply(ratio) 
+    data.drop(1, inplace=True)
+    data.reset_index(drop=True, inplace=True)
+    
+    ### Plot 1 
+    st.divider()
+    data.sort_values('National Z-Score', inplace=True)
+    def clean(input):
+        if '^' in input:
+            newinput = input.replace('^','')
+            return newinput
+        else:
+            return input 
+    data['County (new)'] = data['County'].apply(clean)
+    data.reset_index(drop=True, inplace=True)
+    anotherdata = data.copy()
+    anotherdata.set_index('County (new)', inplace=True)
+    fig,ax = plt.subplots(figsize=(10,8))
+    data.plot(kind='bar', y='National Z-Score', figsize=(20,8), ax=ax)
+    ax.set_xticklabels(ax.get_xticklabels(), fontsize=5)
+    ax.set_xlabel('County Name')
+    ax.set_ylabel('National Z-Score')
+    st.pyplot(fig)
 
+    ### Plot 2 
+    st.divider()
+    fig,ax = plt.subplots(figsize=(10,8))
+    anotherdata.plot(kind='bar', y='Physician:Population', ax=ax)
+    ax.set_xticklabels(ax.get_xticklabels(), fontsize=4)
+    ax.set_xlabel('County Name')
+    ax.set_ylabel('Physicians per Person (# of Physician/# of People)')
+    ax.legend(['Physician:Population Ratio'])
+    st.pyplot(fig)
+
+    ### Plot 3 
+    st.divider()
+    dems = pd.read_csv('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/demographics.csv')
+    dems['COUNTYNAME'] = dems['COUNTYNAME'].str.replace('County', '',case=False).str.strip()
+    graphdata = pd.merge(data, dems, left_on='County (new)', right_on='COUNTYNAME', how='left')
+    def filter(input):
+        if pd.isna(input):
+            return 'Low % Minority'
+        else:
+            return 'High % Minority'
+    graphdata['% Minority'] = graphdata['COUNTYNAME'].apply(filter)
+    graphdata.set_index('County (new)', inplace=True)
+    demographics = gpd.read_file('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/texas_shapefile.zip')
+    tx_counties = demographics[demographics['STATEFP'] == '48']
+    new_map = tx_counties.merge(graphdata, left_on='NAME', right_on='County (new)')
+    fig, axs = plt.subplots(1, 2, figsize=(20, 10))
+    new_map.plot(column='Physician:Population', ax=axs[0], legend=True, cmap='coolwarm', edgecolor='black')
+    axs[0].set_title('Physician Ratio per County', fontsize=14)
+    axs[0].axis('off')
+    new_map.plot(column='% Minority', ax=axs[1], legend=True, cmap='viridis', edgecolor='black')
+    axs[1].set_title('High v Low Percentage Minority Counties', fontsize=14)
+    axs[1].axis('off')
+    plt.tight_layout()
+    st.pyplot(fig)
 
 else:
     st.error("Unknown tab. Please select a valid one.")
