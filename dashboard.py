@@ -144,8 +144,7 @@ elif st.session_state.current_tab == "Insurance Coverage":
 
     st.divider()
     texas_data = texas_data[texas_data['county_name'] != '']
-    unins_by_county_data = texas_data.groupby('county_name')['Percent Uninsured for all income levels'].mean()
-    unins_by_county_data= unins_by_county_data[['Percent Uninsured for all income levels']]
+    unins_by_county_data = texas_data.groupby('county_name')['Percent Uninsured for all income levels'].mean().reset_index()
     unins_by_county_data.reset_index(inplace=True)
     demographics = pd.read_csv('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/demographics.csv')
     final = pd.merge(unins_by_county_data, demographics, left_on='county_name', right_on='COUNTYNAME',
