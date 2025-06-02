@@ -19,3 +19,4 @@ pytz==2025.2
 shapely==2.1.1
 six==1.17.0
 tzdata==2025.2
+openpyxl
