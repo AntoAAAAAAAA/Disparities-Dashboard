@@ -435,7 +435,7 @@ elif st.session_state.current_tab == "Mental Health Metrics":
         import pandas as pd
         import matplotlib.pyplot as plt
         # Load shapefile and filter for Texas
-        tx_counties = gpd.read_file('texas_shapefile')
+        tx_counties = gpd.read_file('texas_shapefile.zip')
         tx_counties = tx_counties[tx_counties['STATEFP'] == '48']
         # Prepare your dataset
         therapist_merged['County'] = therapist_merged['County'].str.strip()
