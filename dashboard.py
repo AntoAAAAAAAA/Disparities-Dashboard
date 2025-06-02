@@ -231,6 +231,7 @@ elif st.session_state.current_tab == "Insurance Coverage":
         final['COUNTYNAME'] = final['COUNTYNAME'].str.strip()
         final['county_name'] = final['county_name'].str.strip()
         tx_map = tx_counties.merge(final,left_on='NAME', right_on='county_name')
+        tx_map = gpd.GeoDataFrame(tx_map, geometry='geometry')
         # Percent Uninsured for all income levels
         # % Minority
         fig, axs = plt.subplots(1, 2, figsize=(20, 10))
