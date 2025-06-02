@@ -230,20 +230,18 @@ elif st.session_state.current_tab == "Insurance Coverage":
         final['county_name'] = final['county_name'].str.replace(r'\s*county\s*','',case=False, regex=True) #remove 'county'
         final['COUNTYNAME'] = final['COUNTYNAME'].str.strip()
         final['county_name'] = final['county_name'].str.strip()
-        tx_map = tx_counties.merge(final,left_on='NAME', right_on='county_name')
-        tx_map
-        # tx_map = gpd.GeoDataFrame(tx_map, geometry='geometry')
+        tx_map = tx_counties.merge(final,left_on='NAME', right_on='county_name', how='left')
         # Percent Uninsured for all income levels
         # % Minority
-        # fig, axs = plt.subplots(1, 2, figsize=(20, 10))
-        # tx_map.plot(column='% Minority', ax=axs[0], legend=True, cmap='coolwarm', edgecolor='black')
-        # axs[0].set_title('% Minority', fontsize=14)
-        # axs[0].axis('off')
-        # tx_map.plot(column='Percent Uninsured for all income levels', ax=axs[1], legend=True, cmap='viridis', edgecolor='black')
-        # axs[1].set_title('Percent Uninsured for all income levels', fontsize=14)
-        # axs[1].axis('off')
-        # plt.tight_layout()
-        # st.pyplot(fig)
+        fig, axs = plt.subplots(1, 2, figsize=(20, 10))
+        tx_map.plot(column='% Minority', ax=axs[0], legend=True, cmap='coolwarm', edgecolor='black')
+        axs[0].set_title('% Minority', fontsize=14)
+        axs[0].axis('off')
+        tx_map.plot(column='Percent Uninsured for all income levels', ax=axs[1], legend=True, cmap='viridis', edgecolor='black')
+        axs[1].set_title('Percent Uninsured for all income levels', fontsize=14)
+        axs[1].axis('off')
+        plt.tight_layout()
+        st.pyplot(fig)
         # Group and calculate mean
         st.dataframe(final.groupby('% Minority')['Percent Uninsured for all income levels'].mean())
         
