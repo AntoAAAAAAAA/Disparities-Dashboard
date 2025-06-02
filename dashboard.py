@@ -230,7 +230,7 @@ elif st.session_state.current_tab == "Insurance Coverage":
         final['county_name'] = final['county_name'].str.replace(r'\s*county\s*','',case=False, regex=True) #remove 'county'
         final['COUNTYNAME'] = final['COUNTYNAME'].str.strip()
         final['county_name'] = final['county_name'].str.strip()
-        tx_map = tx_counties.merge(final,left_on='NAME', right_on='county_name', how='left')
+        tx_map = tx_counties.merge(final,left_on='NAME', right_on='county_name')
         # Percent Uninsured for all income levels
         # % Minority
         fig, axs = plt.subplots(1, 2, figsize=(20, 10))
