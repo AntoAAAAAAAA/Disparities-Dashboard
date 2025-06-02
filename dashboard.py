@@ -90,7 +90,7 @@ elif st.session_state.current_tab == "Insurance Coverage":
     tab1, tab2 = st.tabs(['Bar Graphs', 'Heatmaps'])
     ### First plot 
     with tab1:
-        data = pd.read_csv('data/sahie_2022.csv', low_memory=False)
+        data = pd.read_csv('db_sahie_2022.csv', low_memory=False)
         data['state_name'] = data['state_name'].str.strip() # remove the spaces 
         data['county_name'] = data['county_name'].str.strip()# remove the spaces 
         texas_data = data[data['state_name'] == 'Texas'].copy() #only Texas data
