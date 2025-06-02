@@ -34,7 +34,55 @@ if st.session_state.current_tab == "Home":
     st.write("Select a section from the left to explore the data.")
     st.markdown("This project was undertaken to expand my data analysis skills  and learn how to make an app " \
     "using streamlit.")
+    st.markdown(
+    'Please find below the sources for all data referenced in this project:'
+    )
+    st.write('')
+    st.write('')
+    st.markdown(
+    '**Demographics:**'
+    )
+    st.markdown(
+    """
+    - [Census 2020 Evaluation Estimates - 2010s County Detail](https://www.census.gov/programs-surveys/popest/technical-documentation/research/evaluation-estimates/2020-evaluation-estimates/2010s-county-detail.html)
+    - [Census 2010-2020 Data Layout PDF](https://www2.census.gov/programs-surveys/popest/technical-documentation/file-layouts/2010-2020/cc-est2020-alldata.pdf)
+    """
+    )
+    st.markdown("**Insurance Coverage:**")
+    st.markdown(
+        """
+    - [Estimates from ACS - Small Area Health Insurance Estimates (SAHIE)](https://www.census.gov/data/datasets/time-series/demo/sahie/estimates-acs.html)
+    """
+    )
 
+    st.markdown("**Mental Health Coverage:**")
+    st.markdown(
+        """
+    - [Texas County Health Rankings Data and Resources](https://www.countyhealthrankings.org/health-data/texas/data-and-resources)
+    - [Texas Mental Health Data Dashboard](https://healthdata.dshs.texas.gov/dashboard/mental-health/mental-health#data-source)
+    """
+    )
+
+    st.markdown("**Physician Access:**")
+    st.markdown(
+        """
+    - [Primary Care Physicians Data - County Health Rankings](https://www.countyhealthrankings.org/health-data/community-conditions/health-infrastructure/clinical-care/primary-care-physicians?year=2025&state=48&tab=1)
+    """
+    )
+
+    st.markdown("**Shapefiles and Population Data:**")
+    st.markdown(
+        """
+    - [Census Shapefiles](https://www.census.gov/cgi-bin/geo/shapefiles/index.php)
+    """
+    )
+
+    st.markdown("**Population Data:**")
+    st.markdown(
+        """
+    - [Texas Demographic Center Population Estimates 2022](https://demographics.texas.gov/Estimates/2022/)
+    """
+    )
 elif st.session_state.current_tab == "Insurance Coverage":
     st.header("Insurance Coverage")
     st.write("This section will display information regarding insurance coverage for racial/ethnic groups in different parts of Texas.")
