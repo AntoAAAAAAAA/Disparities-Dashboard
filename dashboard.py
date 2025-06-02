@@ -90,7 +90,7 @@ elif st.session_state.current_tab == "Insurance Coverage":
     tab1, tab2 = st.tabs(['Bar Graphs', 'Heatmaps'])
     ### First plot 
     with tab1:
-        data = pd.read_csv('db_sahie_2022.csv', low_memory=False)
+        data = pd.read_csv('InsuranceCoverage/sahie_2022.csv', low_memory=False)
         data['state_name'] = data['state_name'].str.strip() # remove the spaces 
         data['county_name'] = data['county_name'].str.strip()# remove the spaces 
         texas_data = data[data['state_name'] == 'Texas'].copy() #only Texas data
@@ -211,7 +211,7 @@ elif st.session_state.current_tab == "Insurance Coverage":
         texas_data = texas_data[texas_data['county_name'] != '']
         unins_by_county_data = texas_data.groupby('county_name')['Percent Uninsured for all income levels'].mean().reset_index()
         unins_by_county_data.reset_index(inplace=True)
-        demographics = pd.read_csv('db_demographics.csv')
+        demographics = pd.read_csv('Demographics/demographics.csv')
         final = pd.merge(unins_by_county_data, demographics, left_on='county_name', right_on='COUNTYNAME',
                         how='left')
         final.drop(columns='Unnamed: 0', inplace=True)
@@ -225,7 +225,7 @@ elif st.session_state.current_tab == "Insurance Coverage":
         import pandas as pd
         import matplotlib.pyplot as plt
         # Load shapefile and filter for Texas
-        tx_counties = gpd.read_file('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data_Analysis/Disparities_Dashboard/texas_shapefile')
+        tx_counties = gpd.read_file('texas_shapefile')
         tx_counties = tx_counties[tx_counties['STATEFP'] == '48']
         final['county_name'] = final['county_name'].str.replace(r'\s*county\s*','',case=False, regex=True) #remove 'county'
         final['COUNTYNAME'] = final['COUNTYNAME'].str.strip()
@@ -266,7 +266,7 @@ elif st.session_state.current_tab == "Insurance Coverage":
 elif st.session_state.current_tab == "Mental Health Metrics":
     st.header("Mental Health Metrics")
     st.write("This section will visualize metrics such as provider ratios, distress levels, and suicide rates.")
-    left = pd.read_excel('db_2025_county_health_rankings_texas_data_-_v1.xlsx', sheet_name="Select Measure Data")
+    left = pd.read_excel('MentalHealthCoverage/2025_county_health_rankings_texas_data_-_v1.xlsx', sheet_name="Select Measure Data")
 
     tab1, tab2 = st.tabs(['Bar Graphs', 'Heatmap'])
     ## Plot 1 
@@ -275,12 +275,12 @@ elif st.session_state.current_tab == "Mental Health Metrics":
         left = left[['State', 'County','Average Number of Mentally Unhealthy Days','# Mental Health Providers', 'Mental Health Provider Rate', 
             'Mental Health Provider Ratio', '# Primary Care Physicians', 'Primary Care Physicians Rate', 
             'Primary Care Physicians Ratio', '# Uninsured', '% Uninsured' ]]
-        right = pd.read_excel('db_2025_county_health_rankings_texas_data_-_v1.xlsx', sheet_name='Additional Measure Data')
+        right = pd.read_excel('MentalHealthCoverage/2025_county_health_rankings_texas_data_-_v1.xlsx', sheet_name='Additional Measure Data')
         right = right[['State', 'County','% Frequent Mental Distress', 'Suicide Rate (Age-Adjusted)', 'Other Primary Care Provider Ratio',
                 'Population']]
         finaldata = pd.merge(left=left, right=right, how='inner', on=['State', 'County'])
         # read in demographics dataset
-        demographics = pd.read_csv('db_demographics.csv')
+        demographics = pd.read_csv('Demographics/demographics.csv')
         dem_final = demographics.copy()
         # remove the 'county' in each county name 
         dem_final['COUNTYNAME'] = dem_final['COUNTYNAME'].str.replace('County', '', case=False).str.strip()
@@ -422,7 +422,7 @@ elif st.session_state.current_tab == "Mental Health Metrics":
     with tab2:
         ### Plot 5 
 
-        therapists_data = pd.read_csv('db_Clinician_Region.csv')
+        therapists_data = pd.read_csv('MentalHealthCoverage/Clinician_Region.csv')
         #clean and merge the two datasets
         therapists_data['County'] = therapists_data['County'].str.replace('County', '', case=False).str.strip()
         therapist_merged = pd.merge(left=therapists_data, right=dem_final, left_on='County', right_on='COUNTYNAME',
@@ -434,7 +434,7 @@ elif st.session_state.current_tab == "Mental Health Metrics":
         import pandas as pd
         import matplotlib.pyplot as plt
         # Load shapefile and filter for Texas
-        tx_counties = gpd.read_file('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data_Analysis/Disparities_Dashboard/texas_shapefile')
+        tx_counties = gpd.read_file('texas_shapefile')
         tx_counties = tx_counties[tx_counties['STATEFP'] == '48']
         # Prepare your dataset
         therapist_merged['County'] = therapist_merged['County'].str.strip()
@@ -476,7 +476,7 @@ elif st.session_state.current_tab == "Physician Access":
     st.header("Physician Access")
     st.write("This section will visualize the amount of access different populations in Texas have to physicians.")
     
-    data = pd.read_csv('db_texas-2025-primary-care-physicians-place-sort.csv')
+    data = pd.read_csv('PhysicianAccess/texas-2025-primary-care-physicians-place-sort.csv')
     # data[data.isnull().any(axis=1)]
     keep_row = data.iloc[0]
     data = data.dropna().copy()
@@ -532,7 +532,7 @@ elif st.session_state.current_tab == "Physician Access":
 
     with tab2:
         ### Plot 3 
-        dems = pd.read_csv('db_demographics.csv')
+        dems = pd.read_csv('Demographics/demographics.csv')
         dems['COUNTYNAME'] = dems['COUNTYNAME'].str.replace('County', '',case=False).str.strip()
         graphdata = pd.merge(data, dems, left_on='County (new)', right_on='COUNTYNAME', how='left')
         def filter(input):
@@ -542,7 +542,7 @@ elif st.session_state.current_tab == "Physician Access":
                 return 'High % Minority'
         graphdata['% Minority'] = graphdata['COUNTYNAME'].apply(filter)
         graphdata.set_index('County (new)', inplace=True)
-        demographics = gpd.read_file('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data_Analysis/Disparities_Dashboard/texas_shapefile.zip')
+        demographics = gpd.read_file('texas_shapefile.zip')
         tx_counties = demographics[demographics['STATEFP'] == '48']
         new_map = tx_counties.merge(graphdata, left_on='NAME', right_on='County (new)')
         fig, axs = plt.subplots(1, 2, figsize=(20, 10))
