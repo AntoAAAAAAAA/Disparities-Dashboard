@@ -225,14 +225,14 @@ elif st.session_state.current_tab == "Insurance Coverage":
         import pandas as pd
         import matplotlib.pyplot as plt
         # Load shapefile and filter for Texas
-        tx_counties = gpd.read_file('texas_shapefile')
+        tx_counties = gpd.read_file('texas_shapefile.zip')
         tx_counties = tx_counties[tx_counties['STATEFP'] == '48']
         final['county_name'] = final['county_name'].str.replace(r'\s*county\s*','',case=False, regex=True) #remove 'county'
         final['COUNTYNAME'] = final['COUNTYNAME'].str.strip()
         final['county_name'] = final['county_name'].str.strip()
         tx_map = tx_counties.merge(final,left_on='NAME', right_on='county_name')
         tx_map = tx_counties.merge(final, left_on='NAME', right_on='county_name', how='left')
-        tx_map = gpd.GeoDataFrame(tx_map, geometry='geometry', crs=tx_counties.crs)
+        # tx_map = gpd.GeoDataFrame(tx_map, geometry='geometry', crs=tx_counties.crs)
         # Percent Uninsured for all income levels
         # % Minority
         fig, axs = plt.subplots(1, 2, figsize=(20, 10))
