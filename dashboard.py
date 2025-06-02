@@ -211,7 +211,7 @@ elif st.session_state.current_tab == "Insurance Coverage":
         texas_data = texas_data[texas_data['county_name'] != '']
         unins_by_county_data = texas_data.groupby('county_name')['Percent Uninsured for all income levels'].mean().reset_index()
         unins_by_county_data.reset_index(inplace=True)
-        demographics = pd.read_csv('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/demographics.csv')
+        demographics = pd.read_csv('db_demographics.csv')
         final = pd.merge(unins_by_county_data, demographics, left_on='county_name', right_on='COUNTYNAME',
                         how='left')
         final.drop(columns='Unnamed: 0', inplace=True)
@@ -266,7 +266,7 @@ elif st.session_state.current_tab == "Insurance Coverage":
 elif st.session_state.current_tab == "Mental Health Metrics":
     st.header("Mental Health Metrics")
     st.write("This section will visualize metrics such as provider ratios, distress levels, and suicide rates.")
-    left = pd.read_excel('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/MentalHealthCoverage/2025_county_health_rankings_texas_data_-_v1.xlsx', sheet_name="Select Measure Data")
+    left = pd.read_excel('db_2025_county_health_rankings_texas_data_-_v1.xlsx', sheet_name="Select Measure Data")
 
     tab1, tab2 = st.tabs(['Bar Graphs', 'Heatmap'])
     ## Plot 1 
@@ -275,12 +275,12 @@ elif st.session_state.current_tab == "Mental Health Metrics":
         left = left[['State', 'County','Average Number of Mentally Unhealthy Days','# Mental Health Providers', 'Mental Health Provider Rate', 
             'Mental Health Provider Ratio', '# Primary Care Physicians', 'Primary Care Physicians Rate', 
             'Primary Care Physicians Ratio', '# Uninsured', '% Uninsured' ]]
-        right = pd.read_excel('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/MentalHealthCoverage/2025_county_health_rankings_texas_data_-_v1.xlsx', sheet_name='Additional Measure Data')
+        right = pd.read_excel('db_2025_county_health_rankings_texas_data_-_v1.xlsx', sheet_name='Additional Measure Data')
         right = right[['State', 'County','% Frequent Mental Distress', 'Suicide Rate (Age-Adjusted)', 'Other Primary Care Provider Ratio',
                 'Population']]
         finaldata = pd.merge(left=left, right=right, how='inner', on=['State', 'County'])
         # read in demographics dataset
-        demographics = pd.read_csv('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/demographics.csv')
+        demographics = pd.read_csv('db_demographics.csv')
         dem_final = demographics.copy()
         # remove the 'county' in each county name 
         dem_final['COUNTYNAME'] = dem_final['COUNTYNAME'].str.replace('County', '', case=False).str.strip()
@@ -422,7 +422,7 @@ elif st.session_state.current_tab == "Mental Health Metrics":
     with tab2:
         ### Plot 5 
 
-        therapists_data = pd.read_csv('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/MentalHealthCoverage/Clinician_Region.csv')
+        therapists_data = pd.read_csv('db_Clinician_Region.csv')
         #clean and merge the two datasets
         therapists_data['County'] = therapists_data['County'].str.replace('County', '', case=False).str.strip()
         therapist_merged = pd.merge(left=therapists_data, right=dem_final, left_on='County', right_on='COUNTYNAME',
@@ -476,7 +476,7 @@ elif st.session_state.current_tab == "Physician Access":
     st.header("Physician Access")
     st.write("This section will visualize the amount of access different populations in Texas have to physicians.")
     
-    data = pd.read_csv('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/PhysicianAccess/texas-2025-primary-care-physicians-place-sort.csv')
+    data = pd.read_csv('db_texas-2025-primary-care-physicians-place-sort.csv')
     # data[data.isnull().any(axis=1)]
     keep_row = data.iloc[0]
     data = data.dropna().copy()
@@ -532,7 +532,7 @@ elif st.session_state.current_tab == "Physician Access":
 
     with tab2:
         ### Plot 3 
-        dems = pd.read_csv('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/demographics.csv')
+        dems = pd.read_csv('db_demographics.csv')
         dems['COUNTYNAME'] = dems['COUNTYNAME'].str.replace('County', '',case=False).str.strip()
         graphdata = pd.merge(data, dems, left_on='County (new)', right_on='COUNTYNAME', how='left')
         def filter(input):
