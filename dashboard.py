@@ -225,7 +225,7 @@ elif st.session_state.current_tab == "Insurance Coverage":
         import pandas as pd
         import matplotlib.pyplot as plt
         # Load shapefile and filter for Texas
-        tx_counties = gpd.read_file('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/texas_shapefile')
+        tx_counties = gpd.read_file('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data_Analysis/Disparities_Dashboard/texas_shapefile')
         tx_counties = tx_counties[tx_counties['STATEFP'] == '48']
         final['county_name'] = final['county_name'].str.replace(r'\s*county\s*','',case=False, regex=True) #remove 'county'
         final['COUNTYNAME'] = final['COUNTYNAME'].str.strip()
@@ -434,7 +434,7 @@ elif st.session_state.current_tab == "Mental Health Metrics":
         import pandas as pd
         import matplotlib.pyplot as plt
         # Load shapefile and filter for Texas
-        tx_counties = gpd.read_file('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/texas_shapefile')
+        tx_counties = gpd.read_file('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data_Analysis/Disparities_Dashboard/texas_shapefile')
         tx_counties = tx_counties[tx_counties['STATEFP'] == '48']
         # Prepare your dataset
         therapist_merged['County'] = therapist_merged['County'].str.strip()
@@ -542,7 +542,7 @@ elif st.session_state.current_tab == "Physician Access":
                 return 'High % Minority'
         graphdata['% Minority'] = graphdata['COUNTYNAME'].apply(filter)
         graphdata.set_index('County (new)', inplace=True)
-        demographics = gpd.read_file('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/texas_shapefile.zip')
+        demographics = gpd.read_file('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data_Analysis/Disparities_Dashboard/texas_shapefile.zip')
         tx_counties = demographics[demographics['STATEFP'] == '48']
         new_map = tx_counties.merge(graphdata, left_on='NAME', right_on='County (new)')
         fig, axs = plt.subplots(1, 2, figsize=(20, 10))
