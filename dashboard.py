@@ -111,10 +111,11 @@ elif st.session_state.current_tab == "Insurance Coverage":
         ax.set_ylabel('Percent of Uninsured Individuals for all Income Levels')
         ax.set_title('Percent of Uninsured Texans by Race/Ethnicity')
         st.pyplot(fig)
-        st.markdown('In this figure, we see that African Americans alone, American Indian/Alaska Natives alone,' \
-        ' and Pacific Islanders all make up a higher percentage of the uninsured population in Texas. ' \
-        'When looking at ethnicity, those with Hispanic heritage showed the highest proportion of the uninsured population. ' \
-        '')
+        st.markdown(
+        'In this figure, we see that African Americans alone, American Indian/Alaska Natives alone, '
+        'and Pacific Islanders all make up a higher percentage of the uninsured population in Texas. '
+        'When looking at ethnicity, individuals of Hispanic heritage show the highest proportion of the uninsured population.'
+        )   
 
         ### Plot 3 
 
@@ -148,13 +149,14 @@ elif st.session_state.current_tab == "Insurance Coverage":
         ax.set_xlabel('Race Category')
         ax.legend(title='Sex')
         st.pyplot(fig)
-        st.markdown('We see a similar breakdown of percentages of uninsured individuals based on race, except' \
-        'this time it is split between gender. Looking at the figure, we see that there are no significant differences between' \
-        'male and female individuals. However, similar to previous graph on this page, we see that those of Hispanic ethnicity ' \
-        'make up a larger proportion of the uninsured population. We also see that "White" and "Asian Only" are the two racial groups that ' \
-        'make up the smallest proportino of the uninsured population. This data suggests, along with the graph above, suggests a very surface-level correlation' \
-        'between being an ethnic or racial minority and being more likely to not have health insurance coverage.')
-
+        st.markdown(
+        'We observe a similar breakdown of uninsured individuals by race, this time split by gender. '
+        'According to the figure, there are no significant differences between male and female individuals. '
+        'However, similar to the previous graph on this page, individuals of Hispanic ethnicity make up a larger proportion of the uninsured population. '
+        'We also see that "White" and "Asian Only" are the two racial groups that make up the smallest proportion of the uninsured population. '
+        'This data, along with the graph above, suggests a very surface-level correlation between being an ethnic or racial minority and being more likely '
+        'to lack health insurance coverage.'
+        )
     ### Plot 4
 
     with tab2:
@@ -195,16 +197,21 @@ elif st.session_state.current_tab == "Insurance Coverage":
         # Group and calculate mean
         st.dataframe(final.groupby('% Minority')['Percent Uninsured for all income levels'].mean())
         
-        st.markdown('The graph on the left graphs counties that are considered to have high or low percentages of minority populations ' \
-        'as part of their populations. The decision to consider a county to have a high percentage of minorities was made using a separate dataset. ' \
-        'This separate dataset contained percentages of racial gropus within each county. Each percentage was given a Z-score. Counties that had at least' \
-        'one racial group that had higher than 1 Z-score were considered to be counties that contained a high percentage of minorities. All other counties' \
-        'were considered to have a low percentage of minorities.')
-        st.markdown('The graph on the right maps the percentage of uninsured individuals across different Texas counties.')
-        st.write('Looking at these two graphs, we can see somewhat of a common distribution between counties that contain higher percentages of uninsured individuals and counties' \
-        'that contain higher percentages of minorities. No conclusive trends or conclusions can be ascertained, but there is some small evidence that ' \
-        'counties with a higher percentage of minorities also haveing a higher percentage of uninsured individuals. This conclusion would cosine the conclusions' \
-        'derived from the bar graphs in this section.')
+        st.markdown(
+        'The graph on the left shows counties categorized by whether they have high or low percentages of minority populations. '
+        'This classification was made using a separate dataset that included the racial composition of each county. '
+        'Each racial group’s percentage was converted into a Z-score. Counties with at least one racial group scoring above 1 standard deviation (Z-score > 1) '
+        'were considered to have a high percentage of minorities. All other counties were considered to have a low percentage of minorities.'
+        )
+        st.markdown(
+        'The graph on the right displays the percentage of uninsured individuals across different Texas counties.'
+        )
+        st.write(
+        'Comparing these two graphs, we can observe a somewhat similar distribution between counties with higher percentages of uninsured individuals '
+        'and counties with higher percentages of minorities. While no definitive conclusions can be drawn, there is some preliminary evidence suggesting '
+        'that counties with larger minority populations may also have higher rates of uninsured individuals. This tentative finding aligns with the patterns '
+        'observed in the bar graphs presented earlier in this section.'
+        )
     ###Last Section: Dataframe 
     st.divider()
 
@@ -263,6 +270,11 @@ elif st.session_state.current_tab == "Mental Health Metrics":
         ax.set_xticklabels(mh_ratio_cleaned.index, rotation=45, fontsize=5)
         st.pyplot(fig)
 
+        st.markdown(
+        'This figure shows the mental health provider ratios for each county. This ratio was originally in the form of ' \
+        '"Patients:Mental Health Provider". This ratio was turned into a decimal for ease of graphing and visualization.'
+        )
+
         ## Plot 2 
 
         st.divider()
@@ -277,6 +289,24 @@ elif st.session_state.current_tab == "Mental Health Metrics":
         )
         fig.update_layout(xaxis_tickangle=90)
         st.plotly_chart(fig, use_container_width=True)
+
+        st.markdown(
+        'This interactive figure also shows the mental health provider ratio for each county, while also indicating which '
+        'counties are considered to have high or low percentages of minorities within their populations. '
+        'This graph is not sufficient to draw conclusions about overall trends or whether there are significant differences '
+        'between counties with high versus low minority populations.'
+        )
+
+        ## Random plot 
+        st.divider()
+        mh_ratio_grouped = mh_ratio_cleaned.groupby('High or Low % Minority')['Mental Health Provider Ratio'].mean()
+        st.dataframe(mh_ratio_grouped)
+        st.markdown(
+        'This table shows that the average mental health provider ratio is lower in counties with a low percentage of minorities '
+        'compared to those with a higher percentage. While this difference is not statistically significant, similar to previous findings, '
+        'it offers a preliminary indication that there may be underlying factors contributing to a lower number of mental '
+        'health providers per person in counties with fewer minorities.'
+        )
 
         ## Plot 3 
 
@@ -303,8 +333,46 @@ elif st.session_state.current_tab == "Mental Health Metrics":
         st.plotly_chart(fig, use_container_width=True)
         st.divider()
 
+        ## Table for Plot 3 
+        mh_suicide_grouped = mh_suicide_rate.groupby('High or Low % Minority')['Suicide Rate (Age-Adjusted)'].mean()
+        st.dataframe(mh_suicide_grouped)
+
+        st.markdown(
+        'The graph and table above display the relationship between counties with high versus low minority populations and their age-adjusted suicide rates. '
+        'From the table, we can see that the average suicide rates between these groups of counties are not significantly different. '
+        'As such, no definitive conclusions can be drawn from this data.'
+        )  
+
+        ## Plot 4 
+        mh_mental_distress = mh_and_demographic[['County', '% Frequent Mental Distress', 'High or Low % Minority']]
+        mh_mental_distress = mh_mental_distress.dropna().copy()
+        import plotly.express as px
+        fig = px.bar(
+            mh_mental_distress.reset_index(),
+            x='County',
+            y='% Frequent Mental Distress',
+            color='High or Low % Minority',
+            title='Mental Distress Rate per County',
+            height=600
+        )
+        fig.update_layout(xaxis_tickangle=90)
+        st.plotly_chart(fig)
+
+        ## Table for Plot 4
+        mh_mental_grouped = mh_mental_distress.groupby('High or Low % Minority')['% Frequent Mental Distress'].mean()
+        mh_mental_grouped_median = mh_mental_distress.groupby('High or Low % Minority')['% Frequent Mental Distress'].median()
+        st.dataframe(mh_mental_grouped)
+        st.dataframe(mh_mental_grouped_median)
+
+        st.markdown(
+        'The graph and two tables above illustrate the relationship between counties with high or low percentages of minorities and the percentage '
+        'of their populations experiencing frequent mental distress. Based on the tables, there is no significant difference in the mean or median percentage '
+        'of frequent mental distress between the two groups. Once again, the results are inconclusive, and further analysis—potentially using different datasets—'
+        'is needed to gain more insight.'
+        )
+
     with tab2:
-        ### Plot 4 
+        ### Plot 5 
 
         therapists_data = pd.read_csv('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/MentalHealthCoverage/Clinician_Region.csv')
         #clean and merge the two datasets
@@ -336,6 +404,23 @@ elif st.session_state.current_tab == "Mental Health Metrics":
         axs[1].axis('off')
         plt.tight_layout()
         st.pyplot(fig)
+
+        st.markdown(
+        'The two maps above display mental health provider data alongside racial demographic information.'
+        )
+
+        st.markdown(
+        'The map on the left shows which counties are considered to have high or low percentages of minority populations. '
+        'The map on the right is a heatmap displaying the average ratio of psychiatrists per 100,000 people for each county.'
+        )
+
+        st.markdown(
+        'Comparing these two maps by identifying overlapping regions can offer valuable insights. Notably, there are clusters of counties '
+        'in southeast and east Texas that show higher psychiatrist ratios while also having higher percentages of minorities. '
+        'The opposite pattern is also observed—and is more common—where counties, particularly in north and west Texas, '
+        'have high minority populations but significantly lower psychiatrist ratios.'
+        )
+
         st.divider()
 
 elif st.session_state.current_tab == "Physician Access":
@@ -391,6 +476,12 @@ elif st.session_state.current_tab == "Physician Access":
         ax.legend(['Physician:Population Ratio'])
         st.pyplot(fig)
 
+        st.markdown(
+        'The first bar graph displays the z-scores of Texas counties with respect to their physician-to-population ratios. '
+        'These z-scores are "national," meaning they compare each county’s ratio to those of counties across the United States. '
+        'The second bar graph shows the actual physician-to-population ratios for each county.'
+        )
+
     with tab2:
         ### Plot 3 
         dems = pd.read_csv('/Users/antoantony/Library/CloudStorage/OneDrive-TheUniversityofTexasatAustin/Python/VS_Code/Data Analysis/Disparities Dashboard/demographics.csv')
@@ -416,8 +507,49 @@ elif st.session_state.current_tab == "Physician Access":
         plt.tight_layout()
         st.pyplot(fig)
 
+        st.markdown(
+        'The two maps above include a heatmap of physician-to-population ratios alongside a map that indicates whether a county '
+        'has a high or low percentage of minority residents. '
+        'When comparing these maps, there do not appear to be any obvious trends or correlations between minority population percentages '
+        'and physician-to-population ratios.'
+        )
+
 elif st.session_state.current_tab == 'My Journey/Reflections':
-    st.markdown('This section will be worked on later.')
+    st.subheader('Personal Reflection')
+    st.markdown(
+    "This project has proven to be incredibly difficult, but equally valuable to me. It is my second project, completed directly "
+    "after finishing the Texas Public Health Blog. This experience has significantly expanded my proficiency with Jupyter Notebook "
+    "and the use of Pandas in Python. I’ve learned many new skills, including how to apply functions to entire columns, clean data, "
+    "set and reset indexes, split a single dataset into multiple datasets for graphing, use GeoPandas to create heatmaps, use Plotly "
+    "to make interactive graphs, merge datasets, and use Streamlit to build this dashboard."
+    )
+
+    st.markdown(
+        "This project felt overwhelming at first. The early stages began with creating three Jupyter Notebook files, which would later be "
+        "translated into the three informational tabs seen on the left-hand sidebar. Finding the necessary datasets was made easier with the "
+        "help of AI. Each notebook required significant time to refine its dataset, determine appropriate graphing methods, and resolve coding bugs. "
+        "Repeating this process across three very different datasets was frustrating, but ultimately very rewarding. This process was especially impactful "
+        "because I felt far more confident by the time I reached the second and third notebooks. By then, I had improved my logic, gained enough experience "
+        "to code independently, and learned to make edits to datasets with the assurance that they would not cause errors later on."
+    )
+
+    st.markdown(
+        "The Streamlit aspect of this project was the most rewarding. I used AI to create a basic template for the dashboard, then integrated the Jupyter "
+        "Notebooks into different sections. One of the most challenging parts of this process was adjusting the graph code to be compatible with Streamlit, "
+        "which requires a specific version of Matplotlib for proper display. In the end, learning to use Streamlit's tab creation system, button sidebars, "
+        "titles, markdown text, and running the app through the terminal gave me valuable experience in software design."
+    )
+
+    st.markdown(
+        "Overall, I consider this project a major success in terms of software development, but somewhat of a failure in terms of the data analysis itself. "
+        "Unfortunately, I was not able to replicate the results of reputable research with the datasets and methods I used. I plan to revisit this and determine "
+        "what went wrong, as well as explore why the data yielded insignificant differences. Further research could include more advanced analytical techniques "
+        "(which I currently don’t know how to implement). I also believe many of the inconclusive results stem from the nature of the data itself. These large-scale, "
+        "generalized datasets include many estimates, and it may simply be that there are no obvious trends to find. I’m aware of the shortcomings in this analysis, "
+        "and I’m confident that I can improve my techniques and conduct more accurate analyses in the future."
+    )
+
+
 
 
 else:
